@@ -42,6 +42,6 @@ jobs:
           if [ ! "${{ steps.get-files.outputs.files }}" ];then
               echo "TWBX file list is Empty."
           else
-              project_id=`jq '.project_id' project-d.json`
+              project_id=`jq '.project_id' project-id.json`
               python3 publish_twb_workbook.py --server_url "${{env.SERVURL}}" --project_id ${project_id} --password ${{env.PASS}} --username ${{env.UNAME}} --workbook_files "${{ steps.get-files.outputs.files }}"
           fi
