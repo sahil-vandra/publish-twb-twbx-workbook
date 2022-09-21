@@ -10,6 +10,7 @@ def main(args):
         if len(temp_wb) > 0:
             wb_list.append(temp_wb)
     print("\nwb_list::", wb_list)
+    print("\nproject_id::", args.project_id)
 
     if len(wb_list) > 0:
         # Step 1: Sign in to server.
