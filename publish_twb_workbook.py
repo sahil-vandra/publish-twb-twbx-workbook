@@ -11,6 +11,8 @@ def main(args):
             wb_list.append(temp_wb)
     print("\nwb_list::", wb_list)
     print("\nproject_id::", args.project_id)
+    project_id =args.project_id.replace('"',"")
+    print("\nproject_id::", project_id)
 
     if len(wb_list) > 0:
         # Step 1: Sign in to server.
@@ -21,7 +23,7 @@ def main(args):
         with server.auth.sign_in(tableau_auth):
             # Step 3: New workbook item publish.
             for wb_file in wb_list:
-                new_workbook = TSC.WorkbookItem(args.project_id)
+                new_workbook = TSC.WorkbookItem(project_id)
                 new_workbook = server.workbooks.publish(
                     new_workbook, wb_file, overwrite_true)
                 print(f"\nWorkbook :: {wb_file} :: published")
