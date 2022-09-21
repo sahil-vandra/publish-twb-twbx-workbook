@@ -4,15 +4,11 @@ import tableauserverclient as TSC
 
 def main(args):
     wb_list = []
-    print('\nworkbooks filepath::', args.workbook_files)
     for wb in args.workbook_files.split(","):
         temp_wb = wb.strip()
         if len(temp_wb) > 0:
             wb_list.append(temp_wb)
-    print("\nwb_list::", wb_list)
-    print("\nproject_id::", args.project_id)
-    project_id =args.project_id.replace('"',"")
-    print("\nproject_id::", project_id)
+    project_id = args.project_id.replace('"', "")
 
     if len(wb_list) > 0:
         # Step 1: Sign in to server.
