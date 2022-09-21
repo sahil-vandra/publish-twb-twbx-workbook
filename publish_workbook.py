@@ -17,7 +17,7 @@ def main(args):
         overwrite_true = TSC.Server.PublishMode.Overwrite
 
         with server.auth.sign_in(tableau_auth):
-            # Step 3: New workbook item publish.
+            # Step 2: New workbook item publish.
             for wb_file in wb_list:
                 new_workbook = TSC.WorkbookItem(project_id)
                 new_workbook = server.workbooks.publish(
