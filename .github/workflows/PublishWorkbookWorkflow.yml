@@ -37,12 +37,8 @@ jobs:
       - name: Publish twbx Workbook
         run: |
           project_id=`jq '.project_id' project-d.json`
-          echo "${project_id}"
           if [ ! "${{ steps.get-files.outputs.files }}" ];then
-                echo "TWBX file list is Empty."
+              echo "TWBX file list is Empty."
           else
-                if [ ! "$project_id" ];then
-                    python3 publish_twb_workbook.py --server_url "${{env.SERVURL}}" --project_id "${project_id}" --password ${{env.PASS}} --username ${{env.UNAME}} --workbook_files "${{ steps.get-files.outputs.files }}"
-                else echo "Please provide project id"
-                fi
+              python3 publish_twb_workbook.py --server_url "${{env.SERVURL}}" --project_id "${project_id}" --password ${{env.PASS}} --username ${{env.UNAME}} --workbook_files "${{ steps.get-files.outputs.files }}"
           fi
