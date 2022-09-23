@@ -1,4 +1,12 @@
 name: PublishTWBXWorkbook
+# on:
+#   push:
+#     branches: [main]
+# on:
+#   pull_request:
+#     branches: 
+#       - main
+#     types: [closed]
 on:
   pull_request:
       branches: [ "main" ]
@@ -8,10 +16,13 @@ env:
   SERVURL: ${{secrets.SERVERURL}}
 
 jobs:
-  Installation_GetFiles:
+  if_merged:
+    # if: github.event.pull_request.merged == true
+    # if: ${{ github.event.pull_request.merged }}
+    # build:
     runs-on: ubuntu-latest
     outputs:
-      changed_files: ${{ steps.get-files.outputs.changed_files }}
+      changed_files: ${{ steps.get-files.outputs.files }}
 
     steps:
       - name: Checkout
@@ -32,25 +43,14 @@ jobs:
       - name: Get changed files
         id: get-files
         # run: echo ::set-output name=files::$(git diff-tree --no-commit-id --diff-filter=AM --name-only -r $(git rev-parse HEAD) -- *.twbx -- *.twb | jq -R -s -c 'split("\n")[:-1]' | jq -r '.[] | (","+.)')
-        run: echo ::set-output name=changed_files::$(git diff --name-only --diff-filter=AM origin/${{ github.event.pull_request.base.ref }} HEAD -- *.twbx -- *.twb | jq -R -s -c 'split("\n")[:-1]' | jq -r '.[] | (","+.)')
+        run: echo ::set-output name=files::$(git diff --name-only --diff-filter=AM origin/${{ github.event.pull_request.base.ref }} HEAD -- *.twbx -- *.twb | jq -R -s -c 'split("\n")[:-1]' | jq -r '.[] | (","+.)')
 
-  if_merged:
-    # if: github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
-    needs: Installation_GetFiles
-    steps:
-        - name: Run Validation
-          env:
-            CHANGED_FILES: ${{ needs.Installation_GetFiles.outputs.changed_files }}
-          run: |
-            echo ${{ needs.Installation_GetFiles.outputs.changed_files }}
-            echo "this is changedFilesList::: "$CHANGED_FILES
-        - name: Publish Workbook
-          run: |
-            project_id=`jq '.project_id' project-id.json`
-            echo "Files list :: " "${{ steps.get-files.outputs.files }}"
-            if [ "${{ steps.get-files.outputs.files }}" != '' -a "$project_id" != ''  ];then
-                python3 publish_workbook.py --server_url "${{env.SERVURL}}" --project_id ${project_id} --password ${{env.PASS}} --username ${{env.UNAME}} --workbook_files ${{ needs.Installation_GetFiles.outputs.changed_files }}
-            else
-                echo "TWBX or TWB file list is Empty or project id is not accessable."
-            fi
+      - name: Publish Workbook
+        run: |
+          project_id=`jq '.project_id' project-id.json`
+          echo "Files list :: " "${{ steps.get-files.outputs.files }}"
+          if [ "${{ steps.get-files.outputs.files }}" != '' -a "$project_id" != ''  ];then
+              python3 publish_workbook.py --server_url "${{env.SERVURL}}" --project_id ${project_id} --password ${{env.PASS}} --username ${{env.UNAME}} --workbook_files "${{ steps.get-files.outputs.files }}"
+          else
+              echo "TWBX or TWB file list is Empty or project id is not accessable."
+          fi
