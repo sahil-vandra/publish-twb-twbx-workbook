@@ -35,10 +35,16 @@ jobs:
         run: echo ::set-output name=files::$(git diff --name-only --diff-filter=AM origin/${{ github.event.pull_request.base.ref }} HEAD -- *.twbx -- *.twb | jq -R -s -c 'split("\n")[:-1]' | jq -r '.[] | (","+.)')
 
   if_merged:
-    if: github.event.pull_request.merged == true
+    # if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     needs: Installation_GetFiles
     steps:
+        - name: Run Validation
+          env:
+            CHANGED_FILES: ${{ needs.Installation_GetFiles.outputs.file }}
+          run: |
+            echo ${{ needs.changedFilesList.outputs.changedfiles }}
+            echo "this is changedFilesList::: "$CHANGED_FILES
         - name: Publish Workbook
           run: |
             project_id=`jq '.project_id' project-id.json`
