@@ -2,8 +2,6 @@ name: CI
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
-  push:
-    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
   # Allows you to run this workflow manually from the Actions tab
@@ -21,7 +19,7 @@ jobs:
         run: git fetch --no-tags --prune --depth=1 origin +refs/heads/${{ github.event.pull_request.base.ref }}:refs/remotes/origin/${{ github.event.pull_request.base.ref }}
       - name: Get list of changed files
         id: set-changed-files
-        run: echo ::set-output name=changedfiles::$(git diff --name-only --diff-filter=AM origin/${{ github.event.pull_request.base.ref }} HEAD | uniq  | jq -R -s -c 'split("\n")[:-1]' | jq -r '.[] | ("./" + .)')
+        run: echo ::set-output name=changedfiles::$(git diff --name-only --diff-filter=AM origin/${{ github.event.pull_request.base.ref }} HEAD | jq -R -s -c 'split("\n")[:-1]' | jq -r '.[] | ("./" + .)')
       - name: Print files to be validated
         run: |
           echo "${{steps.set-changed-files.outputs.changedfiles}}"
