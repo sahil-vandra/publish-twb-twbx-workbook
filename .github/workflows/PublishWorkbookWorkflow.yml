@@ -40,11 +40,10 @@ jobs:
       - name: Get changed files
         id: get-files
         # run: echo ::set-output name=files::$(git diff-tree --no-commit-id --diff-filter=AM --name-only -r $(git rev-parse HEAD) -- *.twbx -- *.twb | jq -R -s -c 'split("\n")[:-1]' | jq -r '.[] | (","+.)')
-        run: echo ::set-output name=files::$(git diff --name-only --diff-filter=D origin/${{ github.event.pull_request.base.ref }} HEAD -- *.twbx -- *.twb | jq -R -s -c 'split("\n")[:-1]' | jq -r '.[] | (","+.)')
+        run: echo ::set-output name=files::$(git diff --name-only --diff-filter=AM origin/${{ github.event.pull_request.base.ref }} HEAD -- *.twbx -- *.twb | jq -R -s -c 'split("\n")[:-1]' | jq -r '.[] | (","+.)')
 
       - name: Publish Workbook
         run: |
-          echo "$(git --no-pager diff --name-only main --diff-filter=AM $(git merge-base master) -- *.twbx -- *.twb)" 
           echo "Files list :: " "${{ steps.get-files.outputs.files }}"
           project_id=`jq '.project_id' project-id.json`
           if [ "${{ steps.get-files.outputs.files }}" != '' -a "$project_id" != ''  ];then
