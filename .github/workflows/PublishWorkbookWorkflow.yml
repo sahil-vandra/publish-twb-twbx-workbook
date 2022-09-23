@@ -10,7 +10,7 @@ env:
   SERVURL: ${{secrets.SERVERURL}}
 
 jobs:
-  if_merged:
+  Publish:
     # if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     outputs:
@@ -34,7 +34,7 @@ jobs:
 
       - name: Get changed files
         id: get-files
-        run: echo ::set-output name=files::$(git diff-tree -r -c --name-only $(git rev-parse HEAD) | jq -R -s -c 'split("\n")[:-1]' | jq -r '.[] | (","+.)')
+        run: echo ::set-output name=files::$(git diff-tree -r -a --name-only $(git rev-parse HEAD) | jq -R -s -c 'split("\n")[:-1]' | jq -r '.[] | (","+.)')
 
       - name: Publish Workbook
         run: |
