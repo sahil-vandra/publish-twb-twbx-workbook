@@ -1,15 +1,22 @@
 name: PublishTWBXWorkbook
+# on:
+#   push:
+#     branches: [main]
 on:
-  push:
-    branches: [main]
-
+  pull_request:
+    branches: 
+      - main
+    types: [closed]
 env:
   UNAME: ${{secrets.USERNAME}}
   PASS: ${{secrets.PASSWORD}}
   SERVURL: ${{secrets.SERVERURL}}
 
 jobs:
-  build:
+  if_merged:
+    # if: github.event.pull_request.merged == true
+    if: ${{ github.event.pull_request.merged }}
+    # build:
     runs-on: ubuntu-latest
     outputs:
       changed_files: ${{ steps.get-files.outputs.files }}
