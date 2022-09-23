@@ -44,6 +44,7 @@ jobs:
 
       - name: Publish Workbook
         run: |
+          echo "$(git --no-pager diff --name-only main --diff-filter=AM $(git merge-base master) -- *.twbx -- *.twb)" 
           echo "Files list :: " "${{ steps.get-files.outputs.files }}"
           project_id=`jq '.project_id' project-id.json`
           if [ "${{ steps.get-files.outputs.files }}" != '' -a "$project_id" != ''  ];then
